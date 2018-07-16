@@ -1,0 +1,10 @@
+## Interface: @INTERFACE@
+## Title: MeToo
+## Notes: Summon the same pet or mount as target player. @VERSION@
+## Author: opussf
+## Version: @VERSION@
+## Description:
+## SavedVariables: MeToo_options
+## SavedVariablesPerCharacter:
+MeToo.lua
+MeToo.xml

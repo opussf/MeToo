@@ -94,29 +94,12 @@
 				<include name="*.txt"/>
 			</fileset>
 		</copy>
-		<copy   todir="${package.dir}/collections" filtering="false">
-			<fileset dir="collections">
-				<include name="*"/>
-			</fileset>
-		</copy>
 		<zip 	destfile="${target.dir}/${project.zip}"
 				basedir="${working.dir}"
 				includes="${ant.project.name}/**"/>
 		<checksum file="${target.dir}/${project.zip}"
 				  property="zip.md5" />
 		<echo file="${target.dir}/${project.zip}.md5">${zip.md5} ${project.zip}${line.separator}</echo>
-	</target>
-
-	<target name="web.deploy" description="deploys the web site">
-		<mkdir	dir="${target.dir}/web"/>
-		<zip	destfile="${target.dir}/${ant.project.name}-web.zip"
-				basedir="src/web"
-				includes="**"/>
-
-		<exec executable="rsync" dir="src/web" failonerror="true">
-			<arg line='-rvihz --rsh="/usr/bin/ssh -l ${USER} -p 2022" . ${USER}@${HOST}:${DIR}'/>
-		</exec>
-	<!--		<delete dir="${target.dir}/web" verbose="true"/>   -->
 	</target>
 
 	<target name="wow" depends="test" description="copy files to currnet wow install">
@@ -129,7 +112,6 @@
 				<include name="Readme.txt"/>
 			</fileset>
 		</copy>
-		<chmod perm="ugo+x" dir="${addon.dir}" includes="INEED_Export.lua" />
 	</target>
 
 	<target name="open" description="open the addon dir in the current wow install">
