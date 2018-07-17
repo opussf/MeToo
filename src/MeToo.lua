@@ -43,6 +43,7 @@ function MeToo.Command( msg )
 		-- MeToo.Print( "SpeciesID: "..speciesID.." <> Type: "..petType )
 
 		isOwned = ( C_PetJournal.GetOwnedBattlePetString( speciesID ) and true or nil )
+		-- returns a string of how many you have or nil if you have none.   Convert this to 1 - nil for
 		--MeToo.Print( "You do"..( isOwned and " " or " NOT").." own the target pet." )
 
 		if isOwned then
@@ -53,15 +54,27 @@ function MeToo.Command( msg )
 			-- MeToo.Print( "petID: "..petID.." ("..string.len(petID)..")" )
 
 			currentPet = C_PetJournal.GetSummonedPetGUID()
-			-- MeToo.Print( "Current pet: "..currentPet )
+			-- MeToo.Print( "Current pet: "..(currentPet or "Nil") )
 
-			currentSpeciesID = C_PetJournal.GetPetInfoByPetID( currentPet )
-			-- MeToo.Print( "currentSpeciesID: "..currentSpeciesID )
+			if( currentPet ) then -- you have one summoned
+				currentSpeciesID = C_PetJournal.GetPetInfoByPetID( currentPet )
+				-- MeToo.Print( "currentSpeciesID: "..currentSpeciesID )
+			end
 
-			if( speciesID == currentSpeciesID ) then
-				--MeToo.Print( "Pets are the same" )
-			else
+			-- summon pet if
+				-- no current pet ( currentPet == nil )
+				-- or
+					-- currentPet
+					-- AND
+					-- speciesID != currentSpeciesID
+			if( (not currentPet) or
+					( currentPet and speciesID ~= currentSpeciesID ) ) then
+				-- no current pet
+				-- or current pet, and species do not match
 				C_PetJournal.SummonPetByGUID( petID )
+				DoEmote( "cheer", "player" )
+			else
+				--MeToo.Print( "Pets are the same" )
 			end
 		else
 			DoEmote( "cry", "player" )
