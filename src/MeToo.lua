@@ -34,6 +34,28 @@ function MeToo.OnLoad()
 end
 function MeToo.OnUpdate( ... )
 end
+function MeToo.BuildMountSpells()
+	-- Build a table of [spellID] = "mountName"
+	-- This needs to be expired or rebuilt when a new mount is learned.
+	MeToo.mountSpells = {}
+	local mountIDs = C_MountJournal.GetMountIDs()
+	for _, mID in pairs(mountIDs) do
+		--print( mID )
+		mName, mSpellID = C_MountJournal.GetMountInfoByID( mID )
+		MeToo.mountSpells[ mSpellID ] = mName
+	end
+end
+function MeToo.GetMountID( unit )
+	-- return the current mount ID...
+	-- match this against the mounts you know.
+	for an=1,40 do  -- scan ALL of the auras...  :(
+		aName, _, aIcon, _, aType, _, _, _, _, aID = UnitAura( unit, an )
+		if( aName and MeToo.mountSpells[aID] and MeToo.mountSpells[aID] == aName ) then
+			--print( unit.." is on: "..aName )
+			return aID, aName
+		end
+	end
+end
 function MeToo.Command( msg )
 	if( UnitIsBattlePetCompanion( "target" ) ) then
 		-- MeToo.Print( "Target IS battle pet" )
@@ -81,8 +103,49 @@ function MeToo.Command( msg )
 		end
 
 		---- note...  repalce timer
+	elseif( UnitIsPlayer( "target" ) ) then
+		if( not IsFlying() ) then  -- only do this if you are NOT flying...
+			_, unitSpeed = GetUnitSpeed( "target" )
+			--print( "Target unitSpeed: "..unitSpeed )
+			if( unitSpeed ~= 7 ) then  -- there is no IsMounted( unitID ), use the UnitSpeed to guess if they are mounted.
+				myMountID = nil
+				if( not MeToo.mountSpells ) then  -- build the mount spell list here
+					MeToo.BuildMountSpells()
+				end
+				if( IsMounted() ) then  -- if you are mounted, scan and find your mount ID
+					myMountID, myMountName = MeToo.GetMountID( "player" )
+				end
+				theirMountID, theirMountName = MeToo.GetMountID( "target" )   --
+
+				--[[
+				if( theirMountID ) then
+					print( "They are mounted on: "..theirMountName.." ("..theirMountID..")" )
+				end
+				if( myMountID ) then
+					print( "I am mounted on: "..myMountName.." ("..myMountID..")" )
+				end
+				]]
+
+				if( myMountID ~= theirMountID ) then  -- not the same mount
+					--print( "We are not on the same mount" )
+					mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
+
+					_, _, _, _, isUsable = C_MountJournal.GetMountInfoByID( mountSpell )
+					-- print( theirMountName.." "..( isUsable and "is" or "is NOT" ).." usable." )
+
+					if( isUsable ) then
+						DoEmote( "cheer", "player" )
+						C_MountJournal.SummonByID( mountSpell )
+					else
+						DoEmote( "cry", "player" )
+					end
+				end
+			end
+		else
+			print( "You are flying.  Not even going to try to change mounts." )
+		end
 	else
-		MeToo.Print( "Target is NOT a battle pet" )
+		-- MeToo.Print( "Target is NOT a battle pet or player." )
 	end
 end
 --==--==--
