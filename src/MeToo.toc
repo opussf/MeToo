@@ -3,7 +3,7 @@
 ## Notes: Summon the same pet or mount as target player. @VERSION@
 ## Author: opussf
 ## Version: @VERSION@
-## Description:
+## Description: Summon the same pet or mount as target player.
 ## SavedVariables: MeToo_options
 ## SavedVariablesPerCharacter:
 MeToo.lua
