@@ -14,6 +14,9 @@ COLOR_GOLD = "|cffcfb52b";
 COLOR_NEON_BLUE = "|cff4d4dff";
 COLOR_END = "|r";
 
+BINDING_HEADER_METOOBUTTONS = "MeToo Bindings"
+BINDING_NAME_METOOBUTTON = "MeToo!"
+
 MeToo = {}
 MeToo_options = {}
 
