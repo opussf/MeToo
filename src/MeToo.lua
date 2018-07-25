@@ -129,7 +129,7 @@ function MeToo.Command( msg )
 				end
 				]]
 
-				if( myMountID ~= theirMountID ) then  -- not the same mount
+				if( theirMountID and theirMountID ~= myMountID ) then  -- not the same mount
 					--print( "We are not on the same mount" )
 					mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
 
