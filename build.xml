@@ -12,6 +12,9 @@
 	<exec executable="git" dir="." outputproperty="git.tag" failifexecutionfails="false" errorproperty="">
 		<arg line="describe --tags --abbrev=0" />
 	</exec>
+	<exec executable="git" dir="." outputproperty="git.firstcommit" failifexecutionfails="false" errorproperty="">
+		<arg line="rev-list --max-parents=0 --abbrev-commit HEAD" />
+	</exec>
 	<!-- Get a 'revision' based on last tag, commit count, commitsha, and branch name -->
 	<exec executable="git" dir="." outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
 		<arg line="describe --tags --always HEAD" />
@@ -23,20 +26,9 @@
 		</and>
 	</condition>
 	<!-- find gitbranch -->
-	<!-- find gitbranch -->
-	<exec executable="git" dir="." outputproperty="git.branch.tmp" failifexecutionfails="false" errorproperty="">
+	<exec executable="git" dir="." outputproperty="git.branch" failifexecutionfails="false" errorproperty="">
 		<arg line="rev-parse --abbrev-ref HEAD"/>
 	</exec>
-	<!-- replace '/' in branch name with '_' -->
-	<loadresource property="git.branch">
-		<propertyresource name="git.branch.tmp"/>
-		<filterchain>
-			<tokenfilter>
-				<replacestring from="/" to="_"/>
-			</tokenfilter>
-		</filterchain>
-	</loadresource>
-	<!-- assign the git.branch to the branch property -->
 	<condition property="branch" value="-${git.branch}" else="">
 		<and>
 			<isset property="git.branch"/>
@@ -67,15 +59,26 @@
 	<filter token="VERSION" value="${version.number}"/>
 	<filter token="INTERFACE" value="${INTERFACE}"/>
 
+	<patternset id="packageFiles">
+		<include name="src/*.xml"/>
+		<include name="src/*.toc"/>
+		<include name="src/*.lua"/>
+		<include name="${working.dir}/*.txt"/>
+		<include name="./*.md"/>
+	</patternset>
+
 	<target name="clean" description="Cleans old builds">
 		<delete dir="target" verbose="true"/>
 	</target>
 
 	<target name="changelog" description="Creates a changelog">
+		<condition property="logstart" value="${git.tag}" else="${git.firstcommit}">
+			<length string="${git.tag}" when="greater" length="0"/>
+		</condition>
 		<mkdir dir="${working.dir}"/>
-		<echo file="${working.dir}/changelog.txt">Changes since ${git.tag}..${line.separator}${line.separator}</echo>
+		<echo file="${working.dir}/changelog.txt">Changes since ${logstart}..${line.separator}${line.separator}</echo>
 		<exec executable="git" dir=".">
-			<arg line="log --graph --pretty=format:'%h %ci - %d %s &lt;%an&gt;' ${git.tag}~1.."/>
+			<arg line="log --graph --pretty=format:'%h %ci - %d %s &lt;%an&gt;' ${logstart}.."/>
 			<redirector append="true" output="${working.dir}/changelog.txt"/>
 		</exec>
 	</target>
@@ -83,18 +86,9 @@
 	<target name="package" depends="changelog, test" description="Create a deploy package">
 		<property name="package.dir" location="${working.dir}/${ant.project.name}"/>
 		<delete dir="${package.dir}" verbose="false"/>
-		<copy	todir="${package.dir}" filtering="true">
-			<fileset dir="src">
-				<include name="*.lua"/>
-				<include name="*.toc"/>
-				<include name="*.xml"/>
-				<include name="*.txt"/>
-			</fileset>
-			<fileset dir="${working.dir}">
-				<include name="*.txt"/>
-			</fileset>
+		<copy	todir="${package.dir}" filtering="true" flatten="true">
 			<fileset dir=".">
-				<include name="README.md"/>
+				<patternset refid="packageFiles"/>
 			</fileset>
 		</copy>
 		<zip 	destfile="${target.dir}/${project.zip}"
@@ -107,14 +101,15 @@
 
 	<target name="wow" depends="test" description="copy files to currnet wow install">
 		<mkdir dir="${addon.dir}"/>
-		<copy todir="${addon.dir}" filtering="true" force="true">
-			<fileset dir="src">
-				<include name="*.lua"/>
-				<include name="*.toc"/>
-				<include name="*.xml"/>
-				<include name="Readme.txt"/>
+		<delete>
+			<fileset dir="${addon.dir}" includes="*.toc"/>
+		</delete>
+		<copy todir="${addon.dir}" filtering="true" flatten="true">
+			<fileset dir=".">
+				<patternset refid="packageFiles"/>
 			</fileset>
 		</copy>
+		<chmod perm="ugo+x" dir="${addon.dir}" includes="GR_Export.lua" />
 	</target>
 
 	<target name="open" description="open the addon dir in the current wow install">
