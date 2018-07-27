@@ -78,7 +78,7 @@
 		<mkdir dir="${working.dir}"/>
 		<echo file="${working.dir}/changelog.txt">Changes since ${logstart}..${line.separator}${line.separator}</echo>
 		<exec executable="git" dir=".">
-			<arg line="log --graph --pretty=format:'%h %ci - %d %s &lt;%an&gt;' ${logstart}.."/>
+			<arg line="log --graph --pretty=format:'%h %ci - %d %s &lt;%an&gt;' ${logstart}~.."/>
 			<redirector append="true" output="${working.dir}/changelog.txt"/>
 		</exec>
 	</target>
