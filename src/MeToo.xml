@@ -9,9 +9,6 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 				MeToo.OnLoad();
 				self:Hide();
 			</OnLoad>
-			<OnUpdate>
-				MeToo.OnUpdate(arg1);
-			</OnUpdate>
 			<OnEvent>
 				MeToo[event](self, ...)
 			</OnEvent>
