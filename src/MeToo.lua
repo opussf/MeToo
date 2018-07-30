@@ -20,6 +20,11 @@ function MeToo.OnLoad()
 	SLASH_METOO1 = "/M2"
 	SLASH_METOO2 = "/METOO"
 	SlashCmdList["METOO"] = function( msg ) MeToo.Command( msg ); end
+	MeToo_Frame:RegisterEvent( "NEW_MOUNT_ADDED" )
+end
+function MeToo.NEW_MOUNT_ADDED()
+	print( "NEW_MOUNT_ADDED" )
+	MeToo.BuildMountSpells()
 end
 function MeToo.BuildMountSpells()
 	-- Build a table of [spellID] = "mountName"
