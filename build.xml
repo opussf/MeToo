@@ -64,7 +64,7 @@
 		<include name="src/*.toc"/>
 		<include name="src/*.lua"/>
 		<include name="${working.dir}/*.txt"/>
-		<include name="./*.md"/>
+		<include name="README.md"/>
 	</patternset>
 
 	<target name="clean" description="Cleans old builds">
