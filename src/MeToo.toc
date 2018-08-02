@@ -4,7 +4,7 @@
 ## Author: opussf
 ## Version: @VERSION@
 ## Description: Summon the same pet or mount as target player.
-## SavedVariables: MeToo_options MeToo_knownEmotes
+## SavedVariables: MeToo_options
 ## SavedVariablesPerCharacter:
 MeToo.lua
 MeToo.xml

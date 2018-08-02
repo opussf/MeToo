@@ -8,8 +8,41 @@ MeToo.defaultOptions = {
 	["companionFailure_doEmote"] = true,
 	["companionFailure_emote"] = "CRY"
 }
-MeToo_options = { unpack( MeToo.defaultOptions ) }
+MeToo_options = {}
 
+function MeToo.OptionsPanel_Reset()
+	-- Called from Addon_loaded
+	MeToo.OptionsPanel_Refresh()
+end
+function MeToo.OptionsPanel_OKAY()
+	-- Data was recorded, clear the temp
+	MeToo.Print( "Options_Panel_OKAY" )
+	MeToo.oldValues = nil
+end
+function MeToo.OptionsPanel_Cancel()
+	-- reset to temp and update the UI
+	MeToo.Print( "Options_Panel_Cancel" )
+	if MeToo.oldValues then
+		for key,val in pairs( MeToo.oldValues ) do
+			print( key )
+			MeToo_options[key] = val
+		end
+	end
+	MeToo.oldValues = nil
+end
+function MeToo.OptionsPanel_Default()
+	MeToo.Print("Default")
+	for k,v in pairs( MeToo.defaultOptions ) do
+		print( k )
+		MeToo_options[k] = v
+	end
+end
+function MeToo.OptionsPanel_Refresh()
+	-- set the drop down values here...  Maybe more?
+	MeToo.Print( "OptionsPanel_Refresh" )
+	MeTooOptionsFrame_MountSuccessDoEmote:SetChecked( MeToo_options["mountSuccess_doEmote"] )
+	MeTooOptionsFrame_MountSuccessEmoteEditBox:SetText( MeToo_options["mountSuccess_emote"] )
+end
 function MeToo.OptionsPanel_OnLoad( panel )
 	MeToo.Print( "OptionsPanel_OnLoad" )
 	panel.name = "MeToo"
@@ -22,31 +55,14 @@ function MeToo.OptionsPanel_OnLoad( panel )
 
 	InterfaceOptions_AddCategory( panel )
 	InterfaceAddOnsList_Update()
-end
-function MeToo.OptionsPanel_Reset()
-	-- Called from Addon_loaded
-	MeToo.OptionsPanel_Refresh()
-end
-function MeToo.OptionsPanel_OKAY()
-	-- Data was recorded, clear the temp
-	MeToo.oldValues = nil
-end
-function MeToo.OptionsPanel_Cancel()
-	-- reset to temp and update the UI
-	if MeToo.oldValues then
-		for key,val in pairs( MeToo.oldValues ) do
-			MeToo_options[key] = val
-		end
+	for k,v in pairs( MeToo.defaultOptions ) do
+		MeToo_options[k] = MeToo_options[k] or v
 	end
-	MeToo.oldValues = nil
+	--MeToo_options = { unpack( MeToo.defaultOptions ) }
 end
-function MeToo.OptionsPanel_Default()
-	MeToo.Print("Default")
-end
-function MeToo.OptionsPanel_Refresh()
-	-- set the drop down values here...  Maybe more?
-end
-function MeToo.OptionsPanel_CheckButton_OnLoad( self, option, text )
+-----------------
+function MeToo.OptionsPanel_CheckButton_OnShow( self, option, text )
+	MeToo.Print( text..": OnLoad" )
 	getglobal( self:GetName().."Text"):SetText( text )
 	self:SetChecked( MeToo_options[option] )
 end
@@ -60,7 +76,70 @@ function MeToo.OptionsPanel_CheckButton_PostClick( self, option )
 end
 
 
+---------------
+function MeToo.OptionsPanel_EditBox_OnLoad( self, option )
+	MeToo.Print( "EditBox_OnLoad( "..self:GetName()..", "..option.." )" )
+	self:SetAutoFocus( false )
+	self:RegisterEvent( "ADDON_LOADED" )
+	--self:SetCursorPosition(0)
+end
+function MeToo.OptionsPanel_EditBox_Event( self, option, event, ... )
+	if( event == "ADDON_LOADED" ) then
+		MeToo.Print( "EditBox_Event( "..self:GetName()..", "..option..", "..event.." )" )
+		MeToo.Print( "--->"..MeToo_options[option] )
+		self:SetText( MeToo_options[option] )
+		self:SetCursorPosition(0)
+		self:UnregisterEvent( "ADDON_LOADED" )
+	end
+end
+function MeToo.OptionsPanel_EditBox_OnShow( self, option )
+	MeToo.Print( "EditBox_OnShow( "..option.." )" )
+	--MeToo.Print( "Set to: "..MeToo_options[option] )
+	--self:SetText( MeToo_options[option] )
+end
+
+function MeToo.OptionsPanel_EditBox_TextChanged( self, option )
+	MeToo.Print( "TextChanged: "..option.." >"..self:GetText() )
+	if MeToo.oldValues then
+		MeToo.oldValues[option] = MeToo.oldValues[option] or MeToo_options[option]
+	else
+		MeToo.oldValues = { [option] = MeToo_options[option] }
+	end
+	MeToo_options[option] = self:GetText()
+end
+
+
 --[[
+
+
+function INEED.OptionsPanel_EditBox_TextChanged( self, option )
+	if INEED.oldValues then
+		INEED.oldValues[option] = INEED.oldValues[option] or INEED_options[option]
+	else
+		INEED.oldValues={[option]=INEED_options[option] }
+	end
+	INEED_options[option] = self:GetText()
+end
+
+
+
+TextBox events:
+
+    OnCursorChanged
+    OnEditFocusGained
+    OnEditFocusLost
+    OnEnterPressed
+    OnEscapePressed
+    OnInputLanguageChanged
+    OnSpacePressed
+    OnTabPressed
+    OnTextChanged
+    OnTextSet
+
+
+
+
+
 
 function INEED.OptionsPanel_Refresh()
 	-- Called when options panel is opened.
@@ -74,11 +153,6 @@ function INEED.OptionsPanel_Refresh()
 	INEEDOptionsFrame_PlaySoundEditBox:SetText(INEED_options["soundFile"])
 
 	--INEED.Print("Options Panel Refresh: "..INEED_options["emote"])
-end
-
-function INEED.OptionsPanel_EditBox_OnLoad( self, option )
-	self:SetText(INEED_options[option])
-	self:SetCursorPosition(0)
 end
 
 function INEED.OptionsPanel_EditBox_TextChanged( self, option )
