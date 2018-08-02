@@ -1,12 +1,12 @@
-METOO_MSG_ADDONNAME = "MeToo";
-METOO_MSG_VERSION   = GetAddOnMetadata(METOO_MSG_ADDONNAME,"Version");
-METOO_MSG_AUTHOR    = "opussf";
+METOO_MSG_ADDONNAME = "MeToo"
+METOO_MSG_VERSION   = GetAddOnMetadata(METOO_MSG_ADDONNAME,"Version")
+METOO_MSG_AUTHOR    = "opussf"
 
 BINDING_HEADER_METOOBUTTONS = "MeToo Bindings"
 BINDING_NAME_METOOBUTTON = "MeToo!"
 
 MeToo = {}
-MeToo_options = {}
+MeToo_knownEmotes = {}
 
 function MeToo.Print( msg, showName)
 	-- print to the chat frame
@@ -21,10 +21,27 @@ function MeToo.OnLoad()
 	SLASH_METOO2 = "/METOO"
 	SlashCmdList["METOO"] = function( msg ) MeToo.Command( msg ); end
 	MeToo_Frame:RegisterEvent( "NEW_MOUNT_ADDED" )
+	MeToo_Frame:RegisterEvent( "ADDON_LOADED" )
+end
+function MeToo.ADDON_LOADED()
+	MeToo_Frame:UnregisterEvent( "ADDON_LOADED" )
+	MeToo.BuildEmoteList()
+
+	MeToo.OptionsPanel_Reset()
 end
 function MeToo.NEW_MOUNT_ADDED()
 	print( "NEW_MOUNT_ADDED" )
 	MeToo.BuildMountSpells()
+end
+------------
+function MeToo.BuildEmoteList()
+	for i = 1, 1000 do
+		local token = _G["EMOTE"..i.."_TOKEN"]
+		if token then
+			table.insert( MeToo_knownEmotes, token )
+		end
+	end
+	table.sort( MeToo_knownEmotes )
 end
 function MeToo.BuildMountSpells()
 	-- Build a table of [spellID] = "mountName"
