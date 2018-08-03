@@ -47,7 +47,12 @@ function MeToo.OptionsPanel_Refresh()
 	MeTooOptionsFrame_MountFailureEmoteEditBox:SetText( MeToo_options["mountFailure_emote"] )
 	MeTooOptionsFrame_MountFailureEmoteEditBox:SetCursorPosition(0)
 
-
+	MeTooOptionsFrame_CompanionSuccessDoEmote:SetChecked( MeToo_options["companionSuccess_doEmote"] )
+	MeTooOptionsFrame_CompanionSuccessEmoteEditBox:SetText( MeToo_options["companionSuccess_emote"] )
+	MeTooOptionsFrame_CompanionSuccessEmoteEditBox:SetCursorPosition(0)
+	MeTooOptionsFrame_CompanionFailureDoEmote:SetChecked( MeToo_options["companionFailure_doEmote"] )
+	MeTooOptionsFrame_CompanionFailureEmoteEditBox:SetText( MeToo_options["companionFailure_emote"] )
+	MeTooOptionsFrame_CompanionFailureEmoteEditBox:SetCursorPosition(0)
 end
 function MeToo.OptionsPanel_OnLoad( panel )
 	--MeToo.Print( "OptionsPanel_OnLoad" )
@@ -68,7 +73,7 @@ function MeToo.OptionsPanel_OnLoad( panel )
 end
 -----------------
 function MeToo.OptionsPanel_CheckButton_OnShow( self, option, text )
-	MeToo.Print( text..": OnShow" )
+	--MeToo.Print( text..": OnShow" )
 	getglobal( self:GetName().."Text"):SetText( text )
 end
 function MeToo.OptionsPanel_CheckButton_PostClick( self, option )
@@ -86,12 +91,6 @@ function MeToo.OptionsPanel_EditBox_OnLoad( self, option )
 	--MeToo.Print( "EditBox_OnLoad( "..self:GetName()..", "..option.." )" )
 	self:SetAutoFocus( false )
 	--self:SetCursorPosition(0)
-end
-function MeToo.OptionsPanel_EditBox_OnShow( self, option )
-	MeToo.Print( "EditBox_OnShow( "..option.." )" )
-	--self:SetCursorPosition(0)
-	--MeToo.Print( "Set to: "..MeToo_options[option] )
-	--self:SetText( MeToo_options[option] )
 end
 
 function MeToo.OptionsPanel_EditBox_TextChanged( self, option )
