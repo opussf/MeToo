@@ -77,7 +77,7 @@ function MeToo.GetMountID( unit )
 		end
 	end
 end
-function MeToo.Command( msg )
+function MeToo.PerformMatch()
 	if( UnitIsBattlePetCompanion( "target" ) ) then  -- target is battle pet
 		speciesID = UnitBattlePetSpeciesID( "target" )
 		petType = UnitBattlePetType( "target" )
@@ -157,3 +157,44 @@ function MeToo.Command( msg )
 		-- MeToo.Print( "Target is NOT a battle pet or player." )
 	end
 end
+-----
+function MeToo.ParseCmd( msg )
+	if msg then
+		msg = string.lower( msg )
+		local a, b, c = strfind( msg, "(%S+)" )  -- contiguous string of non-space chars.  a = start, b=len, c=str
+		if a then
+			-- c is the matched string
+			return c, strsub( msg, b+2 )
+		else
+			return ""
+		end
+	end
+end
+function MeToo.Command( msg )
+	local cmd, param = MeToo.ParseCmd( msg )
+	--MeToo.Print( "cl:"..cmd.." p:"..(param or "nil") )
+	local cmdFunc = MeToo.CommandList[cmd]
+	if cmdFunc then
+		cmdFunc.func( param )
+	else
+		MeToo.PerformMatch()
+	end
+end
+function MeToo.PrintHelp()
+	MeToo.Print( METOO_MSG_ADDONNAME.." ("..METOO_MSG_VERSION..") by "..METOO_MSG_AUTHOR )
+	MeToo.Print( "Use: /METOO or /M2 targeting a player or companion pet." )
+	for cmd, info in pairs( MeToo.CommandList ) do
+		MeToo.Print( string.format( "%s %s %s -> %s",
+				SLASH_METOO1, cmd, info.help[1], info.help[2] ) )
+	end
+end
+MeToo.CommandList = {
+	["help"] = {
+		["func"] = MeToo.PrintHelp,
+		["help"] = { "", "Print this help."}
+	},
+	["options"] = {
+		["func"] = function() InterfaceOptionsFrame_OpenToCategory( METOO_MSG_ADDONNAME ) end,
+		["help"] = { "", "Open the options panel." }
+	},
+}
