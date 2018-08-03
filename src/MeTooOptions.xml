@@ -56,7 +56,7 @@
 				</Scripts>
 			</CheckButton>
 			<EditBox name="$parent_MountSuccessEmoteEditBox" inherits="InputBoxTemplate">
-				<Size x="100" y="16"/>
+				<Size x="100" y="18"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_MountSuccessDoEmote" relativePoint="RIGHT">
 						<Offset x="125" y="0"/>
@@ -66,7 +66,6 @@
 					<OnLoad>MeToo.OptionsPanel_EditBox_OnLoad( self, "mountSuccess_emote" );</OnLoad>
 					<OnShow>MeToo.OptionsPanel_EditBox_OnShow( self, "mountSuccess_emote" );</OnShow>
 					<OnTextChanged>MeToo.OptionsPanel_EditBox_TextChanged( self, "mountSuccess_emote" )</OnTextChanged>
-					<OnEvent>MeToo.OptionsPanel_EditBox_Event( self, "mountSuccess_emote", event, ... );</OnEvent>
 				</Scripts>
 			</EditBox>
 			<Button name="$parent_MountSuccessEmoteTestButton" inherits="UIPanelButtonTemplate"	text="Test Emote">
@@ -78,7 +77,6 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						print( "Test Emote" );
 						local emote = _G[self:GetParent():GetName().."_MountSuccessEmoteEditBox"]:GetText();
 						DoEmote( emote );
 					</OnClick>
@@ -98,7 +96,7 @@
 				</Scripts>
 			</CheckButton>
 			<EditBox name="$parent_MountFailureEmoteEditBox" inherits="InputBoxTemplate">
-				<Size x="100" y="16"/>
+				<Size x="100" y="18"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent_MountFailureDoEmote" relativePoint="RIGHT">
 						<Offset x="125" y="0"/>
@@ -108,7 +106,6 @@
 					<OnLoad>MeToo.OptionsPanel_EditBox_OnLoad( self, "mountFailure_emote" );</OnLoad>
 					<OnShow>MeToo.OptionsPanel_EditBox_OnShow( self, "mountFailure_emote" );</OnShow>
 					<OnTextChanged>MeToo.OptionsPanel_EditBox_TextChanged( self, "mountFailure_emote" )</OnTextChanged>
-					<OnEvent>MeToo.OptionsPanel_EditBox_Event( self, "mountFailure_emote", event, ... );</OnEvent>
 				</Scripts>
 			</EditBox>
 			<Button name="$parent_MountFailureEmoteTestButton" inherits="UIPanelButtonTemplate"	text="Test Emote">
@@ -120,7 +117,6 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						print( "Test Emote" );
 						local emote = _G[self:GetParent():GetName().."_MountFailureEmoteEditBox"]:GetText();
 						DoEmote( emote );
 					</OnClick>

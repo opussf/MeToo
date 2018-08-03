@@ -12,16 +12,16 @@ MeToo_options = {}
 
 function MeToo.OptionsPanel_Reset()
 	-- Called from Addon_loaded
+	-- MeToo.Print( "Reset" )
 	MeToo.OptionsPanel_Refresh()
 end
 function MeToo.OptionsPanel_OKAY()
 	-- Data was recorded, clear the temp
-	MeToo.Print( "Options_Panel_OKAY" )
 	MeToo.oldValues = nil
 end
 function MeToo.OptionsPanel_Cancel()
 	-- reset to temp and update the UI
-	MeToo.Print( "Options_Panel_Cancel" )
+	--MeToo.Print( "Options_Panel_Cancel" )
 	if MeToo.oldValues then
 		for key,val in pairs( MeToo.oldValues ) do
 			print( key )
@@ -31,7 +31,7 @@ function MeToo.OptionsPanel_Cancel()
 	MeToo.oldValues = nil
 end
 function MeToo.OptionsPanel_Default()
-	MeToo.Print("Default")
+	--MeToo.Print("Default")
 	for k,v in pairs( MeToo.defaultOptions ) do
 		print( k )
 		MeToo_options[k] = v
@@ -42,9 +42,15 @@ function MeToo.OptionsPanel_Refresh()
 	MeToo.Print( "OptionsPanel_Refresh" )
 	MeTooOptionsFrame_MountSuccessDoEmote:SetChecked( MeToo_options["mountSuccess_doEmote"] )
 	MeTooOptionsFrame_MountSuccessEmoteEditBox:SetText( MeToo_options["mountSuccess_emote"] )
+	MeTooOptionsFrame_MountSuccessEmoteEditBox:SetCursorPosition(0)
+	MeTooOptionsFrame_MountFailureDoEmote:SetChecked( MeToo_options["mountFailure_doEmote"] )
+	MeTooOptionsFrame_MountFailureEmoteEditBox:SetText( MeToo_options["mountFailure_emote"] )
+	MeTooOptionsFrame_MountFailureEmoteEditBox:SetCursorPosition(0)
+
+
 end
 function MeToo.OptionsPanel_OnLoad( panel )
-	MeToo.Print( "OptionsPanel_OnLoad" )
+	--MeToo.Print( "OptionsPanel_OnLoad" )
 	panel.name = "MeToo"
 	MeTooOptionsFrame_Title:SetText( METOO_MSG_ADDONNAME.." "..METOO_MSG_VERSION )
 	-- buttons
@@ -62,9 +68,8 @@ function MeToo.OptionsPanel_OnLoad( panel )
 end
 -----------------
 function MeToo.OptionsPanel_CheckButton_OnShow( self, option, text )
-	MeToo.Print( text..": OnLoad" )
+	MeToo.Print( text..": OnShow" )
 	getglobal( self:GetName().."Text"):SetText( text )
-	self:SetChecked( MeToo_options[option] )
 end
 function MeToo.OptionsPanel_CheckButton_PostClick( self, option )
 	if MeToo.oldValues then
@@ -78,22 +83,13 @@ end
 
 ---------------
 function MeToo.OptionsPanel_EditBox_OnLoad( self, option )
-	MeToo.Print( "EditBox_OnLoad( "..self:GetName()..", "..option.." )" )
+	--MeToo.Print( "EditBox_OnLoad( "..self:GetName()..", "..option.." )" )
 	self:SetAutoFocus( false )
-	self:RegisterEvent( "ADDON_LOADED" )
 	--self:SetCursorPosition(0)
-end
-function MeToo.OptionsPanel_EditBox_Event( self, option, event, ... )
-	if( event == "ADDON_LOADED" ) then
-		MeToo.Print( "EditBox_Event( "..self:GetName()..", "..option..", "..event.." )" )
-		MeToo.Print( "--->"..MeToo_options[option] )
-		self:SetText( MeToo_options[option] )
-		self:SetCursorPosition(0)
-		self:UnregisterEvent( "ADDON_LOADED" )
-	end
 end
 function MeToo.OptionsPanel_EditBox_OnShow( self, option )
 	MeToo.Print( "EditBox_OnShow( "..option.." )" )
+	--self:SetCursorPosition(0)
 	--MeToo.Print( "Set to: "..MeToo_options[option] )
 	--self:SetText( MeToo_options[option] )
 end
@@ -111,15 +107,6 @@ end
 
 --[[
 
-
-function INEED.OptionsPanel_EditBox_TextChanged( self, option )
-	if INEED.oldValues then
-		INEED.oldValues[option] = INEED.oldValues[option] or INEED_options[option]
-	else
-		INEED.oldValues={[option]=INEED_options[option] }
-	end
-	INEED_options[option] = self:GetText()
-end
 
 
 
