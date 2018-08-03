@@ -85,10 +85,9 @@ end
 function MeToo.OptionsPanel_EditBox_OnLoad( self, option )
 	--MeToo.Print( "EditBox_OnLoad( "..self:GetName()..", "..option.." )" )
 	self:SetAutoFocus( false )
-	--self:SetCursorPosition(0)
 end
 function MeToo.OptionsPanel_EditBox_TextChanged( self, option )
-	MeToo.Print( "TextChanged: "..option.." >"..self:GetText() )
+	--MeToo.Print( "TextChanged: "..option.." >"..self:GetText() )
 	if MeToo.oldValues then
 		MeToo.oldValues[option] = MeToo.oldValues[option] or MeToo_options[option]
 	else
