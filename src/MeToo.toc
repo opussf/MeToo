@@ -8,3 +8,5 @@
 ## SavedVariablesPerCharacter:
 MeToo.lua
 MeToo.xml
+MeTooOptions.lua
+MeTooOptions.xml

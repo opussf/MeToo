@@ -1,12 +1,24 @@
-METOO_MSG_ADDONNAME = "MeToo";
-METOO_MSG_VERSION   = GetAddOnMetadata(METOO_MSG_ADDONNAME,"Version");
-METOO_MSG_AUTHOR    = "opussf";
+METOO_MSG_ADDONNAME = "MeToo"
+METOO_MSG_VERSION   = GetAddOnMetadata(METOO_MSG_ADDONNAME,"Version")
+METOO_MSG_AUTHOR    = "opussf"
+
+-- Colours
+COLOR_RED = "|cffff0000";
+COLOR_GREEN = "|cff00ff00";
+COLOR_BLUE = "|cff0000ff";
+COLOR_PURPLE = "|cff700090";
+COLOR_YELLOW = "|cffffff00";
+COLOR_ORANGE = "|cffff6d00";
+COLOR_GREY = "|cff808080";
+COLOR_GOLD = "|cffcfb52b";
+COLOR_NEON_BLUE = "|cff4d4dff";
+COLOR_END = "|r";
 
 BINDING_HEADER_METOOBUTTONS = "MeToo Bindings"
 BINDING_NAME_METOOBUTTON = "MeToo!"
 
 MeToo = {}
-MeToo_options = {}
+MeToo.knownEmotes = {}
 
 function MeToo.Print( msg, showName)
 	-- print to the chat frame
@@ -21,10 +33,27 @@ function MeToo.OnLoad()
 	SLASH_METOO2 = "/METOO"
 	SlashCmdList["METOO"] = function( msg ) MeToo.Command( msg ); end
 	MeToo_Frame:RegisterEvent( "NEW_MOUNT_ADDED" )
+	MeToo_Frame:RegisterEvent( "ADDON_LOADED" )
+end
+function MeToo.ADDON_LOADED()
+	MeToo_Frame:UnregisterEvent( "ADDON_LOADED" )
+	MeToo.BuildEmoteList()
+
+	MeToo.OptionsPanel_Reset()
 end
 function MeToo.NEW_MOUNT_ADDED()
 	print( "NEW_MOUNT_ADDED" )
 	MeToo.BuildMountSpells()
+end
+------------
+function MeToo.BuildEmoteList()
+	for i = 1, 1000 do
+		local token = _G["EMOTE"..i.."_TOKEN"]
+		if token then
+			table.insert( MeToo.knownEmotes, token )
+		end
+	end
+	table.sort( MeToo.knownEmotes )
 end
 function MeToo.BuildMountSpells()
 	-- Build a table of [spellID] = "mountName"
@@ -77,12 +106,16 @@ function MeToo.Command( msg )
 				-- no current pet
 				-- or current pet, and species do not match
 				C_PetJournal.SummonPetByGUID( petID )
-				DoEmote( "cheer", "player" )
+				if( MeToo_options.companionSuccess_doEmote and strlen( MeToo_options.companionSuccess_emote ) > 0 ) then
+					DoEmote( MeToo_options.companionSuccess_emote, "player" )
+				end
 			else
 				--MeToo.Print( "Pets are the same" )
 			end
 		else
-			DoEmote( "cry", "player" )
+			if( MeToo_options.companionFailure_doEmote and strlen( MeToo_options.companionFailure_emote ) > 0 ) then
+				DoEmote( MeToo_options.companionFailure_emote, "player" )
+			end
 		end
 
 		---- note...  repalce timer
@@ -106,10 +139,14 @@ function MeToo.Command( msg )
 					_, _, _, _, isUsable = C_MountJournal.GetMountInfoByID( mountSpell ) -- isUsable = can mount
 
 					if( isUsable ) then
-						DoEmote( "cheer", "player" )
+						if( MeToo_options.mountSuccess_doEmote and strlen( MeToo_options.mountSuccess_emote ) > 0 ) then
+							DoEmote( MeToo_options.mountSuccess_emote, "player" )
+						end
 						C_MountJournal.SummonByID( mountSpell )
 					else
-						DoEmote( "cry", "player" )
+						if( MeToo_options.mountFailure_doEmote and strlen( MeToo_options.mountFailure_emote ) > 0 ) then
+							DoEmote( MeToo_options.mountFailure_emote, "player" )
+						end
 					end
 				end
 			end
