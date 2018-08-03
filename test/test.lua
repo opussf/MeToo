@@ -28,4 +28,22 @@ end
 function test.after()
 end
 
+function test.test_ParseCmd_01()
+	out = MeToo.ParseCmd( "" )
+	assertEquals( "", out )
+end
+function test.test_ParseCmd_02()
+	out = MeToo.ParseCmd( "help" )
+	assertEquals( "help", out )
+end
+function test.notest_Command_01()
+	MeToo.Command()
+end
+function test.notest_Command_02()
+	MeToo.Command( "help" )
+end
+function test.notest_Command_03()
+	MeToo.Command( "unknown" )
+end
+
 test.run()
