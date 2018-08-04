@@ -35,6 +35,7 @@ function MeToo.OnLoad()
 	MeToo_Frame:RegisterEvent( "NEW_MOUNT_ADDED" )
 	MeToo_Frame:RegisterEvent( "ADDON_LOADED" )
 end
+--[[
 function MeToo.ADDON_LOADED()
 	MeToo_Frame:UnregisterEvent( "ADDON_LOADED" )
 	MeToo.BuildEmoteList()
@@ -156,6 +157,7 @@ function MeToo.PerformMatch()
 	end
 end
 -----
+]]
 function MeToo.ParseCmd( msg )
 	if msg then
 		msg = string.lower( msg )
