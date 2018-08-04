@@ -7,6 +7,7 @@ MeToo.defaultOptions = {
 	["companionSuccess_emote"] = "CHEER",
 	["companionFailure_doEmote"] = true,
 	["companionFailure_emote"] = "CRY"
+
 }
 MeToo_options = {}
 

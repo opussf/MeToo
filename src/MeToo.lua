@@ -19,6 +19,8 @@ BINDING_NAME_METOOBUTTON = "MeToo!"
 
 MeToo = {}
 MeToo.knownEmotes = {}
+MeToo_mountList = {}
+MeToo_companionList = {}
 
 function MeToo.Print( msg, showName)
 	-- print to the chat frame
@@ -84,11 +86,17 @@ function MeToo.PerformMatch()
 
 		isOwned = ( C_PetJournal.GetOwnedBattlePetString( speciesID ) and true or nil )
 		-- returns a string of how many you have or nil if you have none.   Convert this to 1 - nil for
+		-- C_PetJournal.GetNumCollectedInfo(speciesId)  -- returns have/max
+
+		petName = C_PetJournal.GetPetInfoBySpeciesID( speciesID )  -- get the petName
+		MeToo_companionList[time()] = petName  -- because of the BattlePetGUID included in the link....
+		-- the API will not provide a link from the speciesID...  Even though the main link is:
+		-- |c........|Hbattlepet:<speciesID>:...junk...:petGUID\h[<petName>]|h|r
+		-- "|cff0070dd|Hbattlepet:193:7:3:464:96:68:BattlePet-0-00000492C932|h[Giant Sewer Rat]|h|r"
+		-- not sure what would happen if I crafted a 'fake' link....
 
 		if isOwned then
-			petName = C_PetJournal.GetPetInfoBySpeciesID( speciesID )  -- get the petName
-			_, petID = C_PetJournal.FindPetIDByName( petName )  -- == speciesID from the petName
-
+			_, petID = C_PetJournal.FindPetIDByName( petName )  -- == petID (which is YOUR petID) from the petName
 			currentPet = C_PetJournal.GetSummonedPetGUID()  -- get your current pet
 
 			if( currentPet ) then -- you have one summoned
@@ -132,6 +140,9 @@ function MeToo.PerformMatch()
 
 			if( theirMountID and theirMountID ~= myMountID ) then  -- not the same mount
 				mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
+				mountLink = GetSpellLink( theirMountID )
+				MeToo.Print( "Mount Link: "..mountLink )
+				MeToo_mountList[time()] = mountLink
 
 				_, _, _, _, isUsable = C_MountJournal.GetMountInfoByID( mountSpell ) -- isUsable = can mount
 
@@ -153,6 +164,15 @@ function MeToo.PerformMatch()
 		end
 	else
 		-- MeToo.Print( "Target is NOT a battle pet or player." )
+	end
+end
+function MeToo.ShowList( type )
+	-- type is "companion" or "mount"
+	workingList = _G["MeToo_"..type.."List"]
+	if( workingList ) then
+
+	else
+		MeToo.Print( "workingList for ("..type..") is nil" )
 	end
 end
 -----
