@@ -173,7 +173,7 @@ end
 function MeToo.Command( msg )
 	local cmd, param = MeToo.ParseCmd( msg )
 	--MeToo.Print( "cl:"..cmd.." p:"..(param or "nil") )
-	local cmdFunc = MeToo.CommandList[cmd]
+	local cmdFunc = MeToo.commandList[cmd]
 	if cmdFunc then
 		cmdFunc.func( param )
 	else
@@ -183,12 +183,12 @@ end
 function MeToo.PrintHelp()
 	MeToo.Print( METOO_MSG_ADDONNAME.." ("..METOO_MSG_VERSION..") by "..METOO_MSG_AUTHOR )
 	MeToo.Print( "Use: /METOO or /M2 targeting a player or companion pet." )
-	for cmd, info in pairs( MeToo.CommandList ) do
+	for cmd, info in pairs( MeToo.commandList ) do
 		MeToo.Print( string.format( "%s %s %s -> %s",
 				SLASH_METOO1, cmd, info.help[1], info.help[2] ) )
 	end
 end
-MeToo.CommandList = {
+MeToo.commandList = {
 	["help"] = {
 		["func"] = MeToo.PrintHelp,
 		["help"] = { "", "Print this help."}

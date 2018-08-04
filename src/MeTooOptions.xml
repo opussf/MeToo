@@ -179,8 +179,8 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnLoad>MeToo.OptionsPanel_EditBox_OnLoad( self, "companionSuccess_emote" );</OnLoad>
-					<OnTextChanged>MeToo.OptionsPanel_EditBox_TextChanged( self, "companionSuccess_emote" )</OnTextChanged>
+					<OnLoad>MeToo.OptionsPanel_EditBox_OnLoad( self, "companionFailure_emote" );</OnLoad>
+					<OnTextChanged>MeToo.OptionsPanel_EditBox_TextChanged( self, "companionFailure_emote" )</OnTextChanged>
 				</Scripts>
 			</EditBox>
 			<Button name="$parent_CompanionFailureEmoteTestButton" inherits="UIPanelButtonTemplate"	text="Test Emote">
