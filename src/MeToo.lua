@@ -117,41 +117,39 @@ function MeToo.PerformMatch()
 				DoEmote( MeToo_options.companionFailure_emote, "player" )
 			end
 		end
-
-		---- note...  repalce timer
 	elseif( UnitIsPlayer( "target" ) ) then
-		if( not IsFlying() ) then  -- only do this if you are NOT flying...
-			_, unitSpeed = GetUnitSpeed( "target" )
-			--print( "Target unitSpeed: "..unitSpeed )
-			if( unitSpeed ~= 7 ) then  -- there is no IsMounted( unitID ), use the UnitSpeed to guess if they are mounted.
-				myMountID = nil
-				if( not MeToo.mountSpells ) then  -- build the mount spell list here
-					MeToo.BuildMountSpells()
-				end
-				if( IsMounted() ) then  -- if you are mounted, scan and find your mount ID
-					myMountID, myMountName = MeToo.GetMountID( "player" )
-				end
-				theirMountID, theirMountName = MeToo.GetMountID( "target" )   --
+		_, unitSpeed = GetUnitSpeed( "target" )
+		--print( "Target unitSpeed: "..unitSpeed )
+		if( unitSpeed ~= 7 ) then  -- there is no IsMounted( unitID ), use the UnitSpeed to guess if they are mounted.
+			myMountID = nil
+			if( not MeToo.mountSpells ) then  -- build the mount spell list here
+				MeToo.BuildMountSpells()
+			end
+			if( IsMounted() ) then  -- if you are mounted, scan and find your mount ID
+				myMountID, myMountName = MeToo.GetMountID( "player" )
+			end
+			theirMountID, theirMountName = MeToo.GetMountID( "target" )   --
 
-				if( theirMountID and theirMountID ~= myMountID ) then  -- not the same mount
-					mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
+			if( theirMountID and theirMountID ~= myMountID ) then  -- not the same mount
+				mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
 
-					_, _, _, _, isUsable = C_MountJournal.GetMountInfoByID( mountSpell ) -- isUsable = can mount
+				_, _, _, _, isUsable = C_MountJournal.GetMountInfoByID( mountSpell ) -- isUsable = can mount
 
-					if( isUsable ) then
-						if( MeToo_options.mountSuccess_doEmote and strlen( MeToo_options.mountSuccess_emote ) > 0 ) then
-							DoEmote( MeToo_options.mountSuccess_emote, "player" )
-						end
+				if( isUsable ) then
+					if( MeToo_options.mountSuccess_doEmote and strlen( MeToo_options.mountSuccess_emote ) > 0 ) then
+						DoEmote( MeToo_options.mountSuccess_emote, "player" )
+					end
+					if( not IsFlying() ) then  -- only do this if you are NOT flying...
 						C_MountJournal.SummonByID( mountSpell )
 					else
-						if( MeToo_options.mountFailure_doEmote and strlen( MeToo_options.mountFailure_emote ) > 0 ) then
-							DoEmote( MeToo_options.mountFailure_emote, "player" )
-						end
+						MeToo.Print( "You are flying. Not going to try to change mounts." )
+					end
+				else
+					if( MeToo_options.mountFailure_doEmote and strlen( MeToo_options.mountFailure_emote ) > 0 ) then
+						DoEmote( MeToo_options.mountFailure_emote, "player" )
 					end
 				end
 			end
-		else
-			print( "You are flying.  Not even going to try to change mounts." )
 		end
 	else
 		-- MeToo.Print( "Target is NOT a battle pet or player." )
