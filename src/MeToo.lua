@@ -42,7 +42,7 @@ function MeToo.ADDON_LOADED()
 	MeToo.OptionsPanel_Reset()
 end
 function MeToo.NEW_MOUNT_ADDED()
-	print( "NEW_MOUNT_ADDED" )
+	--print( "NEW_MOUNT_ADDED" )
 	MeToo.BuildMountSpells()
 end
 ------------
