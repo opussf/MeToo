@@ -18,16 +18,31 @@ INEEDUIListFrame_TitleText = INEEDUIListFrame.CreateFontString()
 
 ]]
 MeToo_Frame = CreateFrame()
+MeTooOptionsFrame = CreateFrame()
+MeTooOptionsFrame_MountSuccessDoEmote = CreateCheckButton("MeTooOptionsFrame_MountSuccessDoEmote")
+MeTooOptionsFrame_MountSuccessEmoteEditBox =CreateEditBox("MeTooOptionsFrame_MountSuccessEmoteEditBox")
+MeTooOptionsFrame_MountSuccessEmoteToTarget = CreateCheckButton("MeTooOptionsFrame_MountSuccessEmoteToTarget")
+MeTooOptionsFrame_MountFailureDoEmote = CreateCheckButton("MeTooOptionsFrame_MountFailureDoEmote")
+MeTooOptionsFrame_MountFailureEmoteEditBox =CreateEditBox("MeTooOptionsFrame_MountFailureEmoteEditBox")
+MeTooOptionsFrame_MountFailureEmoteToTarget = CreateCheckButton("MeTooOptionsFrame_MountFailureEmoteToTarget")
+
+MeTooOptionsFrame_CompanionSuccessDoEmote = CreateCheckButton("MeTooOptionsFrame_CompanionSuccessDoEmote")
+MeTooOptionsFrame_CompanionSuccessEmoteEditBox = CreateEditBox("MeTooOptionsFrame_CompanionSuccessEmoteEditBox")
+MeTooOptionsFrame_CompanionFailureDoEmote = CreateCheckButton("MeTooOptionsFrame_CompanionFailureDoEmote")
+MeTooOptionsFrame_CompanionFailureEmoteEditBox = CreateEditBox("MeTooOptionsFrame_CompanionFailureEmoteEditBox")
 
 -- require the file to test
 package.path = "../src/?.lua;'" .. package.path
 require "MeToo"
+require "MeTooOptions"
+
 
 -- addon setup
 
 function test.before()
 	MeToo.OnLoad()
 	MeToo.ADDON_LOADED()
+	actionLog = {}
 end
 function test.after()
 end
@@ -42,23 +57,14 @@ function test.test_Command_Options()
 end
 function test.test_Command_nocmd()
 	MeToo.Command()
+	assertEquals( 0, #actionLog )
 end
-
-
-function test.notest_ParseCmd_01()
-	out = MeToo.ParseCmd( "" )
-	assertEquals( "", out )
-end
-function test.notest_ParseCmd_02()
-	out = MeToo.ParseCmd( "help" )
-	assertEquals( "help", out )
-end
-function test.notest_Command_01()
+function test.test_Command_targetPlayer()
+	TargetUnit("")
 	MeToo.Command()
+	assertEquals( "DoEmote( CRY, player )", actionLog[#actionLog] )
 end
 
-function test.notest_Command_03()
-	MeToo.Command( "unknown" )
-end
+
 
 test.run()
