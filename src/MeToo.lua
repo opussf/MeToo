@@ -35,18 +35,19 @@ function MeToo.OnLoad()
 	MeToo_Frame:RegisterEvent( "NEW_MOUNT_ADDED" )
 	MeToo_Frame:RegisterEvent( "ADDON_LOADED" )
 end
---[[
 function MeToo.ADDON_LOADED()
 	MeToo_Frame:UnregisterEvent( "ADDON_LOADED" )
 	MeToo.BuildEmoteList()
 
 	MeToo.OptionsPanel_Reset()
 end
+--[[
 function MeToo.NEW_MOUNT_ADDED()
 	--print( "NEW_MOUNT_ADDED" )
 	MeToo.BuildMountSpells()
 end
 ------------
+]]
 function MeToo.BuildEmoteList()
 	for i = 1, 1000 do
 		local token = _G["EMOTE"..i.."_TOKEN"]
@@ -56,6 +57,7 @@ function MeToo.BuildEmoteList()
 	end
 	table.sort( MeToo.knownEmotes )
 end
+--[[
 function MeToo.BuildMountSpells()
 	-- Build a table of [spellID] = "mountName"
 	-- This needs to be expired or rebuilt when a new mount is learned.
@@ -78,6 +80,10 @@ function MeToo.GetMountID( unit )
 		end
 	end
 end
+]]
+function MeToo.PerformMatch()
+end
+--[[
 function MeToo.PerformMatch()
 	if( UnitIsBattlePetCompanion( "target" ) ) then  -- target is battle pet
 		speciesID = UnitBattlePetSpeciesID( "target" )
