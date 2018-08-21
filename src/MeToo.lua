@@ -166,13 +166,20 @@ function MeToo.PerformMatch()
 		-- MeToo.Print( "Target is NOT a battle pet or player." )
 	end
 end
-function MeToo.ShowList( type )
+function MeToo.ShowList( listType )
 	-- type is "companion" or "mount"
-	workingList = _G["MeToo_"..type.."List"]
+	listType = string.lower( listType or "mount" )
+	workingList = _G["MeToo_"..listType.."List"]
+	local displayList = {}
 	if( workingList ) then
+		for ts, name in pairs( workingList ) do
+			displayList[ name ] = displayList[ name ] + 1 or 1
+		end
+
+
 
 	else
-		MeToo.Print( "workingList for ("..type..") is nil" )
+		MeToo.Print( "workingList for ("..listType..") is nil" )
 	end
 end
 -----
@@ -214,5 +221,9 @@ MeToo.commandList = {
 	["options"] = {
 		["func"] = function() InterfaceOptionsFrame_OpenToCategory( METOO_MSG_ADDONNAME ) end,
 		["help"] = { "", "Open the options panel." }
+	},
+	["list"] = {
+		["func"] = MeToo.ShowList,
+		["help"] = { "mount | companion", "Show a list of mounts or companions you were unable to match." },
 	},
 }
