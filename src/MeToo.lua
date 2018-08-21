@@ -89,7 +89,7 @@ function MeToo.PerformMatch()
 		-- C_PetJournal.GetNumCollectedInfo(speciesId)  -- returns have/max
 
 		petName = C_PetJournal.GetPetInfoBySpeciesID( speciesID )  -- get the petName
-		MeToo_companionList[time()] = petName  -- because of the BattlePetGUID included in the link....
+		-- MeToo_companionList[time()] = petName  -- because of the BattlePetGUID included in the link....
 		-- the API will not provide a link from the speciesID...  Even though the main link is:
 		-- |c........|Hbattlepet:<speciesID>:...junk...:petGUID\h[<petName>]|h|r
 		-- "|cff0070dd|Hbattlepet:193:7:3:464:96:68:BattlePet-0-00000492C932|h[Giant Sewer Rat]|h|r"
@@ -124,6 +124,8 @@ function MeToo.PerformMatch()
 			if( MeToo_options.companionFailure_doEmote and strlen( MeToo_options.companionFailure_emote ) > 0 ) then
 				DoEmote( MeToo_options.companionFailure_emote, "player" )
 			end
+			MeToo.Print( "Pet name: "..petName )
+			MeToo_companionList[time()] = petName
 		end
 	elseif( UnitIsPlayer( "target" ) ) then
 		_, unitSpeed = GetUnitSpeed( "target" )
@@ -166,20 +168,38 @@ function MeToo.PerformMatch()
 		-- MeToo.Print( "Target is NOT a battle pet or player." )
 	end
 end
-function MeToo.ShowList( listType )
+function MeToo.ShowList( listTypeIn )
 	-- type is "companion" or "mount"
-	listType = string.lower( listType or "mount" )
-	workingList = _G["MeToo_"..listType.."List"]
+	local listType = string.lower( listTypeIn )
+	--print( "ShowList( "..listType.." )" )
+	local workingList = ( listType == "companion" and MeToo_companionList or MeToo_mountList )
 	local displayList = {}
 	if( workingList ) then
+		MeToo.Print( ("Saw it... Want it... (%s list)"):format( ( listType == "companion" and listType or "mount" ) ) )
 		for ts, name in pairs( workingList ) do
-			displayList[ name ] = displayList[ name ] + 1 or 1
+			displayList[ name ] = displayList[ name ] and displayList[ name ] + 1 or 1
 		end
-
-
-
-	else
-		MeToo.Print( "workingList for ("..listType..") is nil" )
+		for name, count in pairs( displayList ) do
+			MeToo.Print( ("%s seen %d time%s."):format( name, count, ( count > 1 and "s" or "" ) ), false )
+		end
+	end
+	if( listTypeIn == "" ) then
+		MeToo.ShowList( "companion" )
+	end
+end
+function MeToo.ClearList( listTypeIn )
+	local listType = string.lower( listTypeIn )
+	--print( "ClearList( "..listType.." )" )
+	local listType = ( listType == "companion" and "companion" or "mount" )
+	if( listType == "mount" ) then
+		MeToo_mountList = {}
+		MeToo.Print( "Clearing mount list." )
+	elseif( listType == "companion" ) then
+		MeToo_companionList = {}
+		MeToo.Print( "Clearing companion list." )
+	end
+	if( listTypeIn == "" ) then
+		MeToo.ClearList( "companion" )
 	end
 end
 -----
@@ -224,6 +244,10 @@ MeToo.commandList = {
 	},
 	["list"] = {
 		["func"] = MeToo.ShowList,
-		["help"] = { "mount | companion", "Show a list of mounts or companions you were unable to match." },
+		["help"] = { "<mount | companion>", "Show a list of mounts or companions you were unable to match." },
+	},
+	["clear"] = {
+		["func"] = MeToo.ClearList,
+		["help"] = { "<mount | companion>", "Clear wanted mounts or companions list" },
 	},
 }
