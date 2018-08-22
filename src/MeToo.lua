@@ -144,7 +144,6 @@ function MeToo.PerformMatch()
 				mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
 				mountLink = GetSpellLink( theirMountID )
 				MeToo.Print( "Mount Link: "..mountLink )
-				MeToo_mountList[time()] = mountLink
 
 				_, _, _, _, isUsable = C_MountJournal.GetMountInfoByID( mountSpell ) -- isUsable = can mount
 
@@ -161,6 +160,7 @@ function MeToo.PerformMatch()
 					if( MeToo_options.mountFailure_doEmote and strlen( MeToo_options.mountFailure_emote ) > 0 ) then
 						DoEmote( MeToo_options.mountFailure_emote, MeToo_options.mountFailure_useTarget and "target" or "player" )
 					end
+					MeToo_mountList[time()] = mountLink
 				end
 			end
 		end
