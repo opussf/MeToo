@@ -26,7 +26,7 @@ function MeToo.Print( msg, showName)
 	-- print to the chat frame
 	-- set showName to false to suppress the addon name printing
 	if (showName == nil) or (showName) then
-		msg = COLOR_PURPLE..METOO_MSG_ADDONNAME.."> "..COLOR_END..msg
+		msg = COLOR_BLUE..METOO_MSG_ADDONNAME.."> "..COLOR_END..msg
 	end
 	DEFAULT_CHAT_FRAME:AddMessage( msg )
 end
@@ -36,12 +36,18 @@ function MeToo.OnLoad()
 	SlashCmdList["METOO"] = function( msg ) MeToo.Command( msg ); end
 	MeToo_Frame:RegisterEvent( "NEW_MOUNT_ADDED" )
 	MeToo_Frame:RegisterEvent( "ADDON_LOADED" )
+	MeToo_Frame:RegisterEvent( "VARIABLES_LOADED" )
 end
 function MeToo.ADDON_LOADED()
 	MeToo_Frame:UnregisterEvent( "ADDON_LOADED" )
 	MeToo.BuildEmoteList()
+	MeToo.RemoveFromLists()
 
 	MeToo.OptionsPanel_Reset()
+end
+function MeToo.VARIABLES_LOADED()
+	MeToo_Frame:UnregisterEvent( "VARIABLES_LOADED" )
+	MeToo.UpdateOptions()
 end
 function MeToo.NEW_MOUNT_ADDED()
 	--print( "NEW_MOUNT_ADDED" )
@@ -200,6 +206,19 @@ function MeToo.ClearList( listTypeIn )
 	end
 	if( listTypeIn == "" ) then
 		MeToo.ClearList( "companion" )
+	end
+end
+function MeToo.RemoveFromLists( daysIn )
+	local expireBefore = time() - ( (daysIn or ( MeToo_options.daysTrackWanted or MeToo.defaultOptions.daysTrackWanted ) ) * 86400 )
+	for ts in pairs( MeToo_companionList ) do
+		if( ts < expireBefore ) then
+			MeToo_companionList[ts] = nil
+		end
+	end
+	for ts in pairs( MeToo_mountList ) do
+		if( ts < expireBefore ) then
+			MeToo_mountList[ts] = nil
+		end
 	end
 end
 -----
