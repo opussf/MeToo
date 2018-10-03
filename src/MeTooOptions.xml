@@ -190,8 +190,8 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>self.tooltip = "Emote the target";</OnLoad>
-					<OnShow>MeToo.OptionsPanel_CheckButton_OnShow( self, "mountFailure_useTarget", "Emote the target" );</OnShow>
-					<PostClick>MeToo.OptionsPanel_CheckButton_PostClick( self, "mountFailure_useTarget" )</PostClick>
+					<OnShow>MeToo.OptionsPanel_CheckButton_OnShow( self, "companionSuccess_useTarget", "Emote the target" );</OnShow>
+					<PostClick>MeToo.OptionsPanel_CheckButton_PostClick( self, "companionSuccess_useTarget" )</PostClick>
 				</Scripts>
 			</CheckButton>
 
@@ -241,8 +241,8 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>self.tooltip = "Emote the target";</OnLoad>
-					<OnShow>MeToo.OptionsPanel_CheckButton_OnShow( self, "mountFailure_useTarget", "Emote the target" );</OnShow>
-					<PostClick>MeToo.OptionsPanel_CheckButton_PostClick( self, "mountFailure_useTarget" )</PostClick>
+					<OnShow>MeToo.OptionsPanel_CheckButton_OnShow( self, "companionFailure_useTarget", "Emote the target" );</OnShow>
+					<PostClick>MeToo.OptionsPanel_CheckButton_PostClick( self, "companionFailure_useTarget" )</PostClick>
 				</Scripts>
 			</CheckButton>
 		</Frames>
