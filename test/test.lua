@@ -1,8 +1,5 @@
 #!/usr/bin/env lua
 
-addonData = { ["Version"] = "1.0",
-}
-
 require "wowTest"
 
 test.outFileName = "testOut.xml"
@@ -17,9 +14,8 @@ SendMailNameEditBox = CreateFontString("SendMailNameEditBox")
 INEEDUIListFrame = CreateFrame()
 INEEDUIListFrame_TitleText = INEEDUIListFrame.CreateFontString()
 ]]
--- require the file to test
-package.path = "../src/?.lua;'" .. package.path
-require "MeToo"
+
+ParseTOC( "../src/MeToo.toc" )
 
 -- addon setup
 
