@@ -1,8 +1,5 @@
 #!/usr/bin/env lua
 
-addonData = { ["Version"] = "1.0",
-}
-
 require "wowTest"
 
 test.outFileName = "testOut.xml"
@@ -31,11 +28,7 @@ MeTooOptionsFrame_CompanionSuccessEmoteEditBox = CreateEditBox("MeTooOptionsFram
 MeTooOptionsFrame_CompanionFailureDoEmote = CreateCheckButton("MeTooOptionsFrame_CompanionFailureDoEmote")
 MeTooOptionsFrame_CompanionFailureEmoteEditBox = CreateEditBox("MeTooOptionsFrame_CompanionFailureEmoteEditBox")
 
--- require the file to test
-package.path = "../src/?.lua;'" .. package.path
-require "MeToo"
-require "MeTooOptions"
-
+ParseTOC( "../src/MeToo.toc" )
 
 -- addon setup
 

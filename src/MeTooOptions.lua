@@ -7,11 +7,19 @@ MeToo.defaultOptions = {
 	["mountFailure_useTarget"] = nil,
 	["companionSuccess_doEmote"] = true,
 	["companionSuccess_emote"] = "CHEER",
+	["companionSuccess_useTarget"] = nil,
 	["companionFailure_doEmote"] = true,
-	["companionFailure_emote"] = "CRY"
+	["companionFailure_emote"] = "CRY",
+	["companionFailure_useTarget"] = nil,
+	["daysTrackWanted"] = 7
+
 }
 MeToo_options = {}
-
+function MeToo.UpdateOptions()
+	for k,v in pairs( MeToo.defaultOptions ) do
+		MeToo_options[k] = ( MeToo_options[k] == nil and v or MeToo_options[k] )
+	end
+end
 function MeToo.OptionsPanel_Reset()
 	-- Called from Addon_loaded
 	-- MeToo.Print( "Reset" )
@@ -53,9 +61,12 @@ function MeToo.OptionsPanel_Refresh()
 	MeTooOptionsFrame_CompanionSuccessDoEmote:SetChecked( MeToo_options["companionSuccess_doEmote"] )
 	MeTooOptionsFrame_CompanionSuccessEmoteEditBox:SetText( MeToo_options["companionSuccess_emote"] )
 	MeTooOptionsFrame_CompanionSuccessEmoteEditBox:SetCursorPosition(0)
+	MeTooOptionsFrame_CompanionSuccessEmoteToTarget:SetChecked( MeToo_options["companionSuccess_useTarget"] )
+
 	MeTooOptionsFrame_CompanionFailureDoEmote:SetChecked( MeToo_options["companionFailure_doEmote"] )
 	MeTooOptionsFrame_CompanionFailureEmoteEditBox:SetText( MeToo_options["companionFailure_emote"] )
 	MeTooOptionsFrame_CompanionFailureEmoteEditBox:SetCursorPosition(0)
+	MeTooOptionsFrame_CompanionFailureEmoteToTarget:SetChecked( MeToo_options["companionFailure_useTarget"] )
 end
 function MeToo.OptionsPanel_OnLoad( panel )
 	--MeToo.Print( "OptionsPanel_OnLoad" )
@@ -69,9 +80,7 @@ function MeToo.OptionsPanel_OnLoad( panel )
 
 	InterfaceOptions_AddCategory( panel )
 	InterfaceAddOnsList_Update()
-	for k,v in pairs( MeToo.defaultOptions ) do
-		MeToo_options[k] = MeToo_options[k] or v
-	end
+	MeToo.UpdateOptions()
 end
 -----------------
 function MeToo.OptionsPanel_CheckButton_OnShow( self, option, text )

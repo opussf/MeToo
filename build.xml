@@ -134,7 +134,7 @@
 		</fail>
 	</target>
 
-	<target name="curse" depends="package">
+	<target name="curse" depends="package" description="copy files to a folder for deploy to curseforge">
 		<property name="curse.dir" location="${ant.project.name}-cf"/>
 		<copy todir="${curse.dir}">
 			<fileset dir="${package.dir}"/>
