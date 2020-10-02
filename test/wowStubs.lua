@@ -278,6 +278,7 @@ min = math.min
 abs = math.abs
 random = math.random
 tinsert = table.insert
+unpack = table.unpack
 
 bit = {}
 function bit.lshift( x, by )
@@ -1380,7 +1381,9 @@ function SetRaidTarget( target, iconID )
 	-- sets the raid icon ID on target
 end
 function BNSendWhisper( id, msg )
-	-- @TODO: Expand this
+	table.insert( chatLog,
+			{ ["msg"] = msg, ["chatType"] = "BNWhisper", ["language"] = "", ["channel"] = "BNWhisper" }
+	)
 end
 function TaxiNodeCost( nodeId )
 	-- http://www.wowwiki.com/API_TaxiNodeCost
@@ -1545,6 +1548,14 @@ end
 --/script for k,v in pairs(C_TradeSkillUI.GetAllRecipeIDs()) do print(k..":"..v) end
 
 ----------
+
+----------
+C_AuctionHouse = {}
+function C_AuctionHouse.PostItem( item, duration, quantity, bid, buyout )
+end
+function C_AuctionHouse.PostCommodity( item, duration, quantity, price )
+end
+
 
 function IsQuestFlaggedCompleted( questID )
 	return nil
