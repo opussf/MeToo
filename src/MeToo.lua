@@ -36,17 +36,19 @@ function MeToo.OnLoad()
 	SlashCmdList["METOO"] = function( msg ) MeToo.Command( msg ); end
 	MeToo_Frame:RegisterEvent( "NEW_MOUNT_ADDED" )
 	MeToo_Frame:RegisterEvent( "ADDON_LOADED" )
-	MeToo_Frame:RegisterEvent( "VARIABLES_LOADED" )
 end
-function MeToo.ADDON_LOADED()
-	MeToo_Frame:UnregisterEvent( "ADDON_LOADED" )
-	MeToo.BuildEmoteList()
-end
-function MeToo.VARIABLES_LOADED()
-	MeToo_Frame:UnregisterEvent( "VARIABLES_LOADED" )
-	MeToo.RemoveFromLists()
-	MeToo.UpdateOptions()
-	MeToo.OptionsPanel_Reset()
+function MeToo.ADDON_LOADED( _, arg1 )
+--	print( "ADDON_LOADED( "..(arg1 or "NIL").." )" )
+--	print( arg1 .. " ?= "..METOO_SLUG .. (arg1 == METOO_SLUG and " YES!" or " no....") )
+
+	if( arg1 == METOO_SLUG ) then
+		MeToo_Frame:UnregisterEvent( "ADDON_LOADED" )
+		MeToo.BuildEmoteList()
+
+		MeToo.RemoveFromLists()
+		MeToo.UpdateOptions()
+		MeToo.OptionsPanel_Reset()
+	end
 end
 function MeToo.NEW_MOUNT_ADDED()
 	--print( "NEW_MOUNT_ADDED" )
