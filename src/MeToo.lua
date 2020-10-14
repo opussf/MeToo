@@ -1,7 +1,7 @@
 METOO_SLUG, MeToo = ...
-METOO_MSG_VERSION = GetAddOnMetadata( METOO_SLUG, "Version" )
 METOO_MSG_ADDONNAME = GetAddOnMetadata( METOO_SLUG, "Title" )
-METOO_MSG_AUTHOR = GetAddOnMetadata( METOO_SLUG, "Author" )
+METOO_MSG_VERSION   = GetAddOnMetadata( METOO_SLUG, "Version" )
+METOO_MSG_AUTHOR    = GetAddOnMetadata( METOO_SLUG, "Author" )
 
 -- Colours
 COLOR_RED = "|cffff0000";
@@ -18,7 +18,6 @@ COLOR_END = "|r";
 BINDING_HEADER_METOOBUTTONS = "MeToo Bindings"
 BINDING_NAME_METOOBUTTON = "MeToo!"
 
---MeToo = {}
 MeToo.knownEmotes = {}
 MeToo_mountList = {}
 MeToo_companionList = {}
