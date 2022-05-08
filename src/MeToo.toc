@@ -1,5 +1,5 @@
+## Title: MeToo v@VERSION@
 ## Interface: @INTERFACE@
-## Title: MeToo
 ## Notes: Summon the same pet or mount as target player. @VERSION@
 ## Author: opussf
 ## X-Credits: Soulshine and Lurkindevil for helping flush out the idea, testing, and getting this going.
