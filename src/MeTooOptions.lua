@@ -71,7 +71,7 @@ end
 function MeToo.OptionsPanel_OnLoad( panel )
 	--MeToo.Print( "OptionsPanel_OnLoad" )
 	panel.name = "MeToo"
-	MeTooOptionsFrame_Title:SetText( METOO_MSG_ADDONNAME.." "..METOO_MSG_VERSION )
+	MeTooOptionsFrame_Title:SetText( METOO_MSG_ADDONNAME.." v"..METOO_MSG_VERSION )
 	-- buttons
 	--panel.okay = MeToo.OptionsPanel_OKAY
 	panel.cancel = MeToo.OptionsPanel_Cancel
