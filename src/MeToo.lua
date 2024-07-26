@@ -259,7 +259,7 @@ MeToo.commandList = {
 		["help"] = { "", "Print this help."}
 	},
 	["options"] = {
-		["func"] = function() InterfaceOptionsFrame_OpenToCategory( METOO_MSG_ADDONNAME ) end,
+		["func"] = function() Settings.OpenToCategory( MeTooOptionsFrame.category:GetID() ) end,
 		["help"] = { "", "Open the options panel." }
 	},
 	["list"] = {
