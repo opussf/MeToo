@@ -140,8 +140,7 @@ function MeToo.PerformMatch()
 		if( unitSpeed ~= 7 ) then  -- there is no IsMounted( unitID ), use the UnitSpeed to guess if they are mounted.
 			MeToo.MountUp()
 		end
-	else
-		MeToo.Print( "Target is NOT a battle pet or player." )
+	else -- Target is NOT a battle pet or player.   Try to match NPC.
 		MeToo.MountUp()
 	end
 end
@@ -155,7 +154,6 @@ function MeToo.MountUp()
 	end
 	theirMountID, theirMountName = MeToo.GetMountID( "target" )
 	if( theirMountID and theirMountID ~= myMountID ) then
-		MeToo.Print( theirMountName.." ("..theirMountID..")" )
 		mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
 		mountLink = C_Spell.GetSpellLink( theirMountID )
 		MeToo.Print( "Mount Link: "..mountLink )
