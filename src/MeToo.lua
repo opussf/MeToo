@@ -89,7 +89,7 @@ end
 function MeToo.DoEmote( emote, target )
 	-- Wrapper for DoEmote.
 	-- Allow throttling of emotes from MeToo
-	if not MeToo.lastEmoteTS or MeToo.lastEmoteTS < time() - 3 then
+	if not MeToo.lastEmoteTS or MeToo.lastEmoteTS < time() - 1 then
 		DoEmote( emote, target )
 		MeToo.lastEmoteTS = time()
 	end
