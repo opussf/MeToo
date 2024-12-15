@@ -80,7 +80,7 @@ function MeToo.GetMountID( unit )
 	-- match this against the mounts you know.
 	for an=1,40 do  -- scan ALL of the auras...  :(
 		auraData = C_UnitAuras.GetAuraDataByIndex( unit, an )
-		if( auraData and MeToo.mountSpells[auraData.spellId] and MeToo.mountSpells[auraData.spellId] == auraData.name ) then
+		if( auraData and MeToo.mountSpells[auraData.spellId] ) then
 			--print( unit.." is on: "..auraData.name )
 			return auraData.spellId, auraData.name
 		end
@@ -142,25 +142,19 @@ function MeToo.PerformMatch()
 			MeToo.Print( "Pet name: "..petName )
 			MeToo_companionList[time()] = petName
 		end
-	elseif( UnitIsPlayer( "target" ) ) then
-		_, unitSpeed = GetUnitSpeed( "target" )
-		--print( "Target unitSpeed: "..unitSpeed )
-		if( unitSpeed ~= 7 ) then  -- there is no IsMounted( unitID ), use the UnitSpeed to guess if they are mounted.
-			MeToo.MountUp()
-		end
-	else -- Target is NOT a battle pet or player.   Try to match NPC.
+	elseif UnitGUID("target") ~= UnitGUID("player") then -- Target is not a pet or yourself.
 		MeToo.MountUp()
 	end
 end
 function MeToo.MountUp()
-	myMountID = nil
+	local myMountID, myMountName
 	if( not MeToo.mountSpells ) then  -- build the mount spell list here
 		MeToo.BuildMountSpells()
 	end
 	if( IsMounted() ) then  -- if you are mounted, scan and find your mount ID
 		myMountID, myMountName = MeToo.GetMountID( "player" )
 	end
-	theirMountID, theirMountName = MeToo.GetMountID( "target" )
+	local theirMountID, theirMountName = MeToo.GetMountID( "target" )
 	if( theirMountID and theirMountID ~= myMountID ) then
 		mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
 		mountLink = C_Spell.GetSpellLink( theirMountID )
