@@ -155,6 +155,7 @@ function MeToo.MountUp()
 		myMountID, myMountName = MeToo.GetMountID( "player" )
 	end
 	local theirMountID, theirMountName = MeToo.GetMountID( "target" )
+	if MeToo.debug then MeToo.Print( "Me: "..(myMountName or "nil").."("..(myMountID or "nil")..") Them: "..(theirMountName or "nil").."("..(theirMountID or "nil")..")") end
 	if( theirMountID and theirMountID ~= myMountID ) then
 		mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
 		mountLink = C_Spell.GetSpellLink( theirMountID )
@@ -273,5 +274,11 @@ MeToo.commandList = {
 	["clear"] = {
 		["func"] = MeToo.ClearList,
 		["help"] = { "<mount | companion>", "Clear wanted mounts or companions list" },
+	},
+	["debug"] = {
+		["func"] = function()
+				MeToo.debug = not MeToo.debug
+				MeToo.Print( "Debug is now: "..( MeToo.debug and "On" or "Off" ) )
+			end,
 	},
 }
