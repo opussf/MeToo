@@ -1,19 +1,19 @@
-METOO_SLUG, MeToo = ...
-METOO_MSG_ADDONNAME = GetAddOnMetadata( METOO_SLUG, "Title" )
-METOO_MSG_VERSION   = GetAddOnMetadata( METOO_SLUG, "Version" )
-METOO_MSG_AUTHOR    = GetAddOnMetadata( METOO_SLUG, "Author" )
+METOO_SLUG, MeToo   = ...
+METOO_MSG_ADDONNAME = C_AddOns.GetAddOnMetadata( METOO_SLUG, "Title" )
+METOO_MSG_VERSION   = C_AddOns.GetAddOnMetadata( METOO_SLUG, "Version" )
+METOO_MSG_AUTHOR    = C_AddOns.GetAddOnMetadata( METOO_SLUG, "Author" )
 
 -- Colours
-COLOR_RED = "|cffff0000";
-COLOR_GREEN = "|cff00ff00";
-COLOR_BLUE = "|cff0000ff";
-COLOR_PURPLE = "|cff700090";
-COLOR_YELLOW = "|cffffff00";
-COLOR_ORANGE = "|cffff6d00";
-COLOR_GREY = "|cff808080";
-COLOR_GOLD = "|cffcfb52b";
-COLOR_NEON_BLUE = "|cff4d4dff";
-COLOR_END = "|r";
+COLOR_RED = "|cffff0000"
+COLOR_GREEN = "|cff00ff00"
+COLOR_BLUE = "|cff0000ff"
+COLOR_PURPLE = "|cff700090"
+COLOR_YELLOW = "|cffffff00"
+COLOR_ORANGE = "|cffff6d00"
+COLOR_GREY = "|cff808080"
+COLOR_GOLD = "|cffcfb52b"
+COLOR_NEON_BLUE = "|cff4d4dff"
+COLOR_END = "|r"
 
 BINDING_HEADER_METOOBUTTONS = "MeToo Bindings"
 BINDING_NAME_METOOBUTTON = "MeToo!"
@@ -36,17 +36,19 @@ function MeToo.OnLoad()
 	SlashCmdList["METOO"] = function( msg ) MeToo.Command( msg ); end
 	MeToo_Frame:RegisterEvent( "NEW_MOUNT_ADDED" )
 	MeToo_Frame:RegisterEvent( "ADDON_LOADED" )
-	MeToo_Frame:RegisterEvent( "VARIABLES_LOADED" )
 end
-function MeToo.ADDON_LOADED()
-	MeToo_Frame:UnregisterEvent( "ADDON_LOADED" )
-	MeToo.BuildEmoteList()
-end
-function MeToo.VARIABLES_LOADED()
-	MeToo_Frame:UnregisterEvent( "VARIABLES_LOADED" )
-	MeToo.RemoveFromLists()
-	MeToo.UpdateOptions()
-	MeToo.OptionsPanel_Reset()
+function MeToo.ADDON_LOADED( _, arg1 )
+--	print( "ADDON_LOADED( "..(arg1 or "NIL").." )" )
+--	print( arg1 .. " ?= "..METOO_SLUG .. (arg1 == METOO_SLUG and " YES!" or " no....") )
+
+	if( arg1 == METOO_SLUG ) then
+		MeToo_Frame:UnregisterEvent( "ADDON_LOADED" )
+		MeToo.BuildEmoteList()
+
+		MeToo.RemoveFromLists()
+		MeToo.UpdateOptions()
+		MeToo.OptionsPanel_Reset()
+	end
 end
 --[[
 function MeToo.NEW_MOUNT_ADDED()
@@ -80,19 +82,23 @@ function MeToo.GetMountID( unit )
 	-- return the current mount ID...
 	-- match this against the mounts you know.
 	for an=1,40 do  -- scan ALL of the auras...  :(
-		aName, _, aIcon, _, aType, _, _, _, _, aID = UnitAura( unit, an )
-		if( aName and MeToo.mountSpells[aID] and MeToo.mountSpells[aID] == aName ) then
-			--print( unit.." is on: "..aName )
-			return aID, aName
+		auraData = C_UnitAuras.GetAuraDataByIndex( unit, an )
+		if( auraData and MeToo.mountSpells[auraData.spellId] ) then
+			--print( unit.." is on: "..auraData.name )
+			return auraData.spellId, auraData.name
 		end
 	end
 end
-]]
-function MeToo.PerformMatch()
+function MeToo.DoEmote( emote, target )
+	-- Wrapper for DoEmote.
+	-- Allow throttling of emotes from MeToo
+	if not MeToo.lastEmoteTS or MeToo.lastEmoteTS < time() - 1 then
+		DoEmote( emote, target )
+		MeToo.lastEmoteTS = time()
+	end
 end
---[[
 function MeToo.PerformMatch()
-	if( UnitIsBattlePetCompanion( "target" ) ) then  -- target is battle pet
+	if( UnitIsBattlePet( "target" ) ) then  -- target is battle pet
 		speciesID = UnitBattlePetSpeciesID( "target" )
 		petType = UnitBattlePetType( "target" )
 
@@ -127,57 +133,54 @@ function MeToo.PerformMatch()
 				-- or current pet, and species do not match
 				C_PetJournal.SummonPetByGUID( petID )
 				if( MeToo_options.companionSuccess_doEmote and strlen( MeToo_options.companionSuccess_emote ) > 0 ) then
-					DoEmote( MeToo_options.companionSuccess_emote, (not MeToo_options.companionSuccess_useTarget) and "player" or nil )
+					MeToo.DoEmote( MeToo_options.companionSuccess_emote, (not MeToo_options.companionSuccess_useTarget) and "player" or nil )
 				end
 			else
 				--MeToo.Print( "Pets are the same" )
 			end
 		else
 			if( MeToo_options.companionFailure_doEmote and strlen( MeToo_options.companionFailure_emote ) > 0 ) then
-				DoEmote( MeToo_options.companionFailure_emote, (not MeToo_options.companionFailure_useTarget) and "player" or nil )
+				MeToo.DoEmote( MeToo_options.companionFailure_emote, (not MeToo_options.companionFailure_useTarget) and "player" or nil )
 			end
 			MeToo.Print( "Pet name: "..petName )
 			MeToo_companionList[time()] = petName
 		end
-	elseif( UnitIsPlayer( "target" ) ) then
-		_, unitSpeed = GetUnitSpeed( "target" )
-		--print( "Target unitSpeed: "..unitSpeed )
-		if( unitSpeed ~= 7 ) then  -- there is no IsMounted( unitID ), use the UnitSpeed to guess if they are mounted.
-			myMountID = nil
-			if( not MeToo.mountSpells ) then  -- build the mount spell list here
-				MeToo.BuildMountSpells()
-			end
-			if( IsMounted() ) then  -- if you are mounted, scan and find your mount ID
-				myMountID, myMountName = MeToo.GetMountID( "player" )
-			end
-			theirMountID, theirMountName = MeToo.GetMountID( "target" )   --
+	elseif UnitGUID("target") ~= UnitGUID("player") then -- Target is not a pet or yourself.
+		MeToo.MountUp()
+	end
+end
+function MeToo.MountUp()
+	local myMountID, myMountName
+	if( not MeToo.mountSpells ) then  -- build the mount spell list here
+		MeToo.BuildMountSpells()
+	end
+	if( IsMounted() ) then  -- if you are mounted, scan and find your mount ID
+		myMountID, myMountName = MeToo.GetMountID( "player" )
+	end
+	local theirMountID, theirMountName = MeToo.GetMountID( "target" )
+	if MeToo.debug then MeToo.Print( "Me: "..(myMountName or "nil").."("..(myMountID or "nil")..") Them: "..(theirMountName or "nil").."("..(theirMountID or "nil")..")") end
+	if( theirMountID and theirMountID ~= myMountID ) then
+		mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
+		mountLink = C_Spell.GetSpellLink( theirMountID )
+		MeToo.Print( "Mount Link: "..mountLink )
 
-			if( theirMountID and theirMountID ~= myMountID ) then  -- not the same mount
-				mountSpell = C_MountJournal.GetMountFromSpell( theirMountID )
-				mountLink = GetSpellLink( theirMountID )
-				MeToo.Print( "Mount Link: "..mountLink )
+		_, _, _, _, isUsable = C_MountJournal.GetMountInfoByID( mountSpell ) -- isUsable = can mount
 
-				_, _, _, _, isUsable = C_MountJournal.GetMountInfoByID( mountSpell ) -- isUsable = can mount
-
-				if( isUsable ) then
-					if( MeToo_options.mountSuccess_doEmote and strlen( MeToo_options.mountSuccess_emote ) > 0 ) then
-						DoEmote( MeToo_options.mountSuccess_emote, MeToo_options.mountSuccess_useTarget and "target" or "player" )
-					end
-					if( not IsFlying() ) then  -- only do this if you are NOT flying...
-						C_MountJournal.SummonByID( mountSpell )
-					else
-						MeToo.Print( "You are flying. Not going to try to change mounts." )
-					end
-				else
-					if( MeToo_options.mountFailure_doEmote and strlen( MeToo_options.mountFailure_emote ) > 0 ) then
-						DoEmote( MeToo_options.mountFailure_emote, MeToo_options.mountFailure_useTarget and "target" or "player" )
-					end
-					MeToo_mountList[time()] = mountLink
-				end
+		if( isUsable ) then
+			if( MeToo_options.mountSuccess_doEmote and strlen( MeToo_options.mountSuccess_emote ) > 0 ) then
+				MeToo.DoEmote( MeToo_options.mountSuccess_emote, MeToo_options.mountSuccess_useTarget and "target" or "player" )
 			end
+			if( not IsFlying() ) then  -- only do this if you are NOT flying...
+				C_MountJournal.SummonByID( mountSpell )
+			else
+				MeToo.Print( "You are flying. Not going to try to change mounts." )
+			end
+		else
+			if( MeToo_options.mountFailure_doEmote and strlen( MeToo_options.mountFailure_emote ) > 0 ) then
+				MeToo.DoEmote( MeToo_options.mountFailure_emote, MeToo_options.mountFailure_useTarget and "target" or "player" )
+			end
+			MeToo_mountList[time()] = mountLink
 		end
-	else
-		-- MeToo.Print( "Target is NOT a battle pet or player." )
 	end
 end
 function MeToo.ShowList( listTypeIn )
@@ -265,7 +268,7 @@ MeToo.commandList = {
 		["help"] = { "", "Print this help."}
 	},
 	["options"] = {
-		["func"] = function() InterfaceOptionsFrame_OpenToCategory( METOO_MSG_ADDONNAME ) end,
+		["func"] = function() Settings.OpenToCategory( MeTooOptionsFrame.category:GetID() ) end,
 		["help"] = { "", "Open the options panel." }
 	},
 	["list"] = {
@@ -275,5 +278,11 @@ MeToo.commandList = {
 	["clear"] = {
 		["func"] = MeToo.ClearList,
 		["help"] = { "<mount | companion>", "Clear wanted mounts or companions list" },
+	},
+	["debug"] = {
+		["func"] = function()
+				MeToo.debug = not MeToo.debug
+				MeToo.Print( "Debug is now: "..( MeToo.debug and "On" or "Off" ) )
+			end,
 	},
 }
