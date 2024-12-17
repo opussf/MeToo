@@ -50,13 +50,11 @@ function MeToo.ADDON_LOADED( _, arg1 )
 		MeToo.OptionsPanel_Reset()
 	end
 end
---[[
 function MeToo.NEW_MOUNT_ADDED()
 	--print( "NEW_MOUNT_ADDED" )
 	MeToo.BuildMountSpells()
 end
 ------------
-]]
 function MeToo.BuildEmoteList()
 	for i = 1, 1000 do
 		local token = _G["EMOTE"..i.."_TOKEN"]
@@ -66,7 +64,6 @@ function MeToo.BuildEmoteList()
 	end
 	table.sort( MeToo.knownEmotes )
 end
---[[
 function MeToo.BuildMountSpells()
 	-- Build a table of [spellID] = "mountName"
 	-- This needs to be expired or rebuilt when a new mount is learned.
@@ -231,7 +228,6 @@ function MeToo.RemoveFromLists( daysIn )
 	end
 end
 -----
-]]
 function MeToo.ParseCmd( msg )
 	if msg then
 		msg = string.lower( msg )
