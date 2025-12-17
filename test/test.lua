@@ -4,6 +4,7 @@ require "wowTest"
 
 test.outFileName = "testOut.xml"
 test.coberturaFileName = "../coverage.xml"
+test.coverageReportPercent = true
 
 -- MeToo_Frame = CreateFrame()
 MeTooOptionsFrame = CreateFrame()
